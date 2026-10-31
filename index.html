@@ -9,8 +9,8 @@
   <style>
     :root {
       --bg-color: #0d0a12;
-      --panel-bg: rgba(22, 16, 29, 0.65);
-      --panel-border: rgba(255, 182, 193, 0.15);
+      --panel-bg: rgba(22, 16, 29, 0.72);
+      --panel-border: rgba(255, 182, 193, 0.2);
       --accent-color: #ff75a0;
       --accent-hover: #ff5288;
       --text-main: #f3f4f6;
@@ -35,20 +35,18 @@
       overflow-x: hidden;
     }
 
-    /* Arka Plan Görseli & Blur Katmanı */
+    /* Orijinal Pembe Çiçekli (Sakura) Arka Plan GIF + Bulanıklık (Blur) */
     .bg-image {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-image: url('https://pin.it/74VwDphM3'); /* Fallback / Direct url */
-      background: url('https://i.pinimg.com/originals/a0/0a/62/a00a62d04a60b9bc2f2119934141d547.gif') center/cover no-repeat,
-                  url('https://pin.it/74VwDphM3') center/cover no-repeat;
-      filter: blur(12px) brightness(0.5);
+      background: url('https://i.pinimg.com/originals/a0/0a/62/a00a62d04a60b9bc2f2119934141d547.gif') center/cover no-repeat;
+      filter: blur(10px) brightness(0.6);
       transform: scale(1.05);
       z-index: 0;
-      pointer-events: none; /* Tıklamaları engellemesin */
+      pointer-events: none;
     }
 
     .bg-overlay {
@@ -57,15 +55,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at center, rgba(13, 10, 18, 0.4) 0%, rgba(13, 10, 18, 0.85) 100%);
+      background: radial-gradient(circle at center, rgba(13, 10, 18, 0.2) 0%, rgba(13, 10, 18, 0.75) 100%);
       z-index: 1;
-      pointer-events: none; /* Tıklamaları engellemesin */
+      pointer-events: none;
     }
 
-    /* Ana Konteyner */
     .app-container {
       position: relative;
-      z-index: 10; /* Tıklanabilirlik için öne alındı */
+      z-index: 10;
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
@@ -73,7 +70,6 @@
       flex: 1;
     }
 
-    /* Üst Menü / Header */
     header {
       display: flex;
       justify-content: space-between;
@@ -102,21 +98,21 @@
 
     nav {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
 
     .nav-btn {
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 10px 16px;
+      padding: 10px 14px;
       border-radius: 10px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .nav-btn:hover, .nav-btn.active {
@@ -127,7 +123,7 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .lang-btn, .auth-btn {
@@ -154,7 +150,6 @@
       background: var(--accent-hover);
     }
 
-    /* Kart Yapıları */
     .grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -177,7 +172,6 @@
       .col-8, .col-4 { grid-column: span 12; }
     }
 
-    /* Discord Banner */
     .discord-card {
       display: flex;
       justify-content: space-between;
@@ -209,7 +203,6 @@
       color: var(--text-main);
     }
 
-    /* Input & Formlar */
     .input-group {
       margin-top: 16px;
       display: flex;
@@ -218,7 +211,7 @@
 
     .custom-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       border: 1px solid var(--panel-border);
       padding: 12px 16px;
       border-radius: 12px;
@@ -230,14 +223,61 @@
       border-color: var(--accent-color);
     }
 
-    /* Modal / Auth Pop-up */
+    .member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .member-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 117, 160, 0.15);
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-online { color: #10b981; }
+    .status-offline { color: #9ca3af; }
+
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
       z-index: 100;
       display: none;
@@ -246,7 +286,7 @@
     }
 
     .modal-card {
-      background: #130e1a;
+      background: #150f1f;
       border: 1px solid var(--panel-border);
       border-radius: 20px;
       padding: 32px;
@@ -265,12 +305,11 @@
       cursor: pointer;
     }
 
-    /* Security Toast */
     .security-toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(220, 38, 38, 0.9);
+      background: rgba(220, 38, 38, 0.95);
       color: white;
       padding: 12px 20px;
       border-radius: 12px;
@@ -280,13 +319,8 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
   </style>
 </head>
 <body>
@@ -295,7 +329,6 @@
   <div class="bg-overlay"></div>
 
   <div class="app-container">
-    <!-- Header -->
     <header>
       <div class="logo-area">
         <i data-lucide="zap" style="color: var(--accent-color)"></i>
@@ -309,6 +342,9 @@
         <button class="nav-btn" onclick="switchTab('slots')">
           <i data-lucide="cpu"></i> <span data-tr="Slot Auto Join" data-en="Slot Auto Join">Slot Auto Join</span>
         </button>
+        <button class="nav-btn" onclick="switchTab('members')">
+          <i data-lucide="users"></i> <span data-tr="Üyeler" data-en="Members">Üyeler</span>
+        </button>
         <button class="nav-btn" onclick="switchTab('stats')">
           <i data-lucide="bar-chart-2"></i> <span data-tr="İstatistikler" data-en="Statistics">İstatistikler</span>
         </button>
@@ -321,9 +357,12 @@
         <button class="lang-btn" onclick="toggleLanguage()">
           <i data-lucide="globe"></i> <span id="lang-label">TR</span>
         </button>
-        <div id="user-controls">
-          <button class="auth-btn auth-btn-primary" onclick="openAuthModal('login')">
+        <div id="user-controls" style="display: flex; gap: 8px;">
+          <button class="auth-btn" onclick="openAuthModal('login')">
             <i data-lucide="log-in"></i> <span data-tr="Giriş Yap" data-en="Login">Giriş Yap</span>
+          </button>
+          <button class="auth-btn auth-btn-primary" onclick="openAuthModal('register')">
+            <i data-lucide="user-plus"></i> <span data-tr="Kayıt Ol" data-en="Register">Kayıt Ol</span>
           </button>
         </div>
       </div>
@@ -332,7 +371,6 @@
     <!-- DASHBOARD TAB -->
     <div id="tab-dashboard" class="tab-content active">
       <div class="grid">
-        <!-- Discord Card -->
         <div class="card col-8 discord-card">
           <div>
             <h3>Discord Sunucumuza Katılın</h3>
@@ -348,7 +386,6 @@
           </div>
         </div>
 
-        <!-- Balance Card -->
         <div class="card col-4">
           <span style="color: var(--text-muted); font-size: 13px;">Mevcut Bakiye</span>
           <h2 id="user-balance" style="font-size: 32px; margin: 8px 0; color: var(--accent-color);">$0.00</h2>
@@ -357,11 +394,10 @@
           </button>
         </div>
 
-        <!-- Gift Code Box -->
         <div class="card col-8">
           <h3><i data-lucide="gift" style="vertical-align: middle;"></i> Gift Code Bozdur</h3>
           <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
-            Discord üzerinden aldığınız 16 haneli kodunuzu girerek bakiyenizi yükleyin.
+            Discord üzerinden aldığınız 60 özel koddan birini girerek bakiye yükleyin.
           </p>
           <div class="input-group">
             <input type="text" id="gift-input" class="custom-input" placeholder="FLX-XXXX-XXXX-XXXX">
@@ -369,11 +405,10 @@
           </div>
         </div>
 
-        <!-- Info Box -->
         <div class="card col-4">
           <h3>Duyurular</h3>
           <p style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">
-            Flex SCRIPT v2.4 güncellemesi yayınlandı! Auto join performans iyileştirmeleri sağlandı.
+            Flex SCRIPT v2.4 aktif! Otomatik güncellemeler devrede.
           </p>
         </div>
       </div>
@@ -383,18 +418,92 @@
     <div id="tab-slots" class="tab-content">
       <div class="card col-12">
         <h2>Slot Auto Join Yönetimi</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Aktif slotlarınızı buradan başlatabilir veya yeni slot satın alabilirsiniz.</p>
-        
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Aktif slotlarınızı buradan yönetin.</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
           <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--panel-border);">
-            <h4>Auto Join Slot #1</h4>
+            <h4>Slot Auto Join #1</h4>
             <p style="color: #10b981; font-weight: 600; margin: 8px 0;">● Aktif</p>
-            <button class="btn-action btn-secondary" style="width: 100%;">Aboneliği Yenile</button>
+            <button class="btn-action btn-secondary" style="width: 100%;">Yenile</button>
           </div>
           <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--panel-border);">
-            <h4>Auto Join Slot #2</h4>
+            <h4>Slot Auto Join #2</h4>
             <p style="color: #ef4444; font-weight: 600; margin: 8px 0;">● Pasif</p>
-            <button class="btn-action" style="width: 100%;" onclick="alert('Satın alma talebi oluşturuldu.')">Yeni Slot Al ($5.00)</button>
+            <button class="btn-action" style="width: 100%;" onclick="alert('Slot satın alındı!')">Slot Al ($5.00)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS TAB -->
+    <div id="tab-members" class="tab-content">
+      <div class="card col-12">
+        <h2><i data-lucide="users" style="vertical-align: middle;"></i> Aktif Üyeler</h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px;">Sistemde kayıtlı aktif Auto Join kullanıcıları.</p>
+        
+        <div class="member-list">
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">D</div>
+              <div>
+                <div style="font-weight: 700;">driftpixelwogm</div>
+                <div style="font-size: 12px; color: var(--text-muted);">VIP Auto Join Member</div>
+              </div>
+            </div>
+            <div class="status-badge status-online">
+              ● Online <span style="color: var(--text-muted); margin-left: 4px;">• 1 hour ago</span>
+            </div>
+          </div>
+
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">F</div>
+              <div>
+                <div style="font-weight: 700;">x_flex_owner</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Developer / Lead</div>
+              </div>
+            </div>
+            <div class="status-badge status-online">
+              ● Online <span style="color: var(--text-muted); margin-left: 4px;">• 15 mins ago</span>
+            </div>
+          </div>
+
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">S</div>
+              <div>
+                <div style="font-weight: 700;">shadow_dev</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Slot #1 User</div>
+              </div>
+            </div>
+            <div class="status-badge status-online">
+              ● Online <span style="color: var(--text-muted); margin-left: 4px;">• 3 hours ago</span>
+            </div>
+          </div>
+
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">N</div>
+              <div>
+                <div style="font-weight: 700;">nexora_99</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Slot #2 User</div>
+              </div>
+            </div>
+            <div class="status-badge status-online">
+              ● Online <span style="color: var(--text-muted); margin-left: 4px;">• 42 mins ago</span>
+            </div>
+          </div>
+
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">V</div>
+              <div>
+                <div style="font-weight: 700;">vortex_user</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Standard Slot</div>
+              </div>
+            </div>
+            <div class="status-badge status-offline">
+              ○ Offline <span style="color: var(--text-muted); margin-left: 4px;">• 2 hours ago</span>
+            </div>
           </div>
         </div>
       </div>
@@ -403,20 +512,18 @@
     <!-- STATS TAB -->
     <div id="tab-stats" class="tab-content">
       <div class="card col-12">
-        <h2>Sistem İstatistikleri</h2>
-        <p style="color: var(--text-muted); margin-top: 10px;">Sunucu Durumu: <span style="color: #10b981;">Online</span></p>
-        <p style="color: var(--text-muted);">Aktif Kullanıcılar: 1,420</p>
+        <h2>İstatistikler</h2>
+        <p style="color: var(--text-muted); margin-top: 10px;">Durum: <span style="color: #10b981;">Online</span></p>
       </div>
     </div>
 
     <!-- MARKET TAB -->
     <div id="tab-market" class="tab-content">
       <div class="card col-12">
-        <h2>Flex Market</h2>
-        <p style="color: var(--text-muted);">Özel script modülleri çok yakında aktif olacaktır.</p>
+        <h2>Market</h2>
+        <p style="color: var(--text-muted);">Ekstra script modülleri yakında.</p>
       </div>
     </div>
-
   </div>
 
   <!-- AUTH MODAL -->
@@ -424,62 +531,48 @@
     <div class="modal-card">
       <button class="close-modal" onclick="closeAuthModal()"><i data-lucide="x"></i></button>
       <h3 id="modal-title" style="margin-bottom: 16px;">Giriş Yap</h3>
-      
       <div style="display: flex; flex-direction: column; gap: 12px;">
         <input type="text" id="auth-user" class="custom-input" placeholder="Kullanıcı Adı">
         <input type="password" id="auth-pass" class="custom-input" placeholder="Şifre">
         <button class="btn-action" style="width: 100%; justify-content: center;" onclick="handleAuth()">Devam Et</button>
       </div>
-      
-      <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 16px;">
-        <a href="#" style="color: var(--accent-color);" onclick="toggleAuthMode()">Hesabın yok mu? Kayıt Ol</a>
-      </p>
     </div>
   </div>
 
   <!-- SECURITY TOAST -->
   <div id="sec-toast" class="security-toast">
-    <i data-lucide="shield-alert" style="vertical-align: middle;"></i> Güvenlik Uyarısı: İnceleme moduna izin verilmiyor!
+    <i data-lucide="shield-alert" style="vertical-align: middle;"></i> Güvenlik Uyarısı: F12 ve İnceleme engellendi!
   </div>
 
   <script>
     lucide.createIcons();
-
-    // Dil Durumu
     let currentLang = 'TR';
-    
-    // Bakiye Durumu
     let userBalance = 0.00;
-    let currentUser = null;
     let isLoginMode = true;
 
-    // Gizli 60 Gift Code Veritabanı
+    // 60 Adet Gizli Gift Code Veritabanı (Çeşitli bakiye değerleriyle: $10, $25, $50)
     const validCodes = {};
     for (let i = 1; i <= 60; i++) {
       const code = `FLX-${1000 + i}-GIFT-${9000 - i}`;
-      validCodes[code] = 10.00; // Her kod $10 yükler
+      // Kodların değerleri farklı bakiye verecek şekilde ayarlandı
+      validCodes[code] = i % 3 === 0 ? 50.00 : (i % 2 === 0 ? 25.00 : 10.00);
     }
 
-    // Sekme Değiştirme
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-      
       document.getElementById(`tab-${tabName}`).classList.add('active');
       event.currentTarget.classList.add('active');
     }
 
-    // Dil Değiştirme
     function toggleLanguage() {
       currentLang = currentLang === 'TR' ? 'EN' : 'TR';
       document.getElementById('lang-label').innerText = currentLang;
-
       document.querySelectorAll('[data-tr]').forEach(el => {
         el.innerText = currentLang === 'TR' ? el.getAttribute('data-tr') : el.getAttribute('data-en');
       });
     }
 
-    // Modal İşlemleri
     function openAuthModal(mode) {
       isLoginMode = mode === 'login';
       document.getElementById('modal-title').innerText = isLoginMode ? 'Giriş Yap' : 'Kayıt Ol';
@@ -490,51 +583,34 @@
       document.getElementById('auth-modal').style.display = 'none';
     }
 
-    function toggleAuthMode() {
-      openAuthModal(isLoginMode ? 'register' : 'login');
-    }
-
     function handleAuth() {
       const username = document.getElementById('auth-user').value.trim();
-      if(!username) return alert('Lütfen kullanıcı adı girin.');
-
-      currentUser = username;
+      if(!username) return alert('Kullanıcı adı boş olamaz.');
       document.getElementById('user-controls').innerHTML = `
-        <span style="font-weight: 700; color: var(--accent-color);">${currentUser}</span>
+        <span style="font-weight: 700; color: var(--accent-color); padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 10px;">${username}</span>
       `;
       closeAuthModal();
     }
 
-    // Gift Code Kullanma
     function redeemGiftCode() {
       const input = document.getElementById('gift-input');
       const code = input.value.trim();
-
       if (validCodes[code]) {
         const amount = validCodes[code];
         userBalance += amount;
-        delete validCodes[code]; // Kod bir daha kullanılamaz
-        
+        delete validCodes[code]; // Kod kullanıldıktan sonra silinir (tek kullanımlık)
         document.getElementById('user-balance').innerText = `$${userBalance.toFixed(2)}`;
-        alert(`Tebrikler! $${amount}.00 bakiyenize eklendi.`);
+        alert(`Tebrikler! $${amount.toFixed(2)} bakiyenize başarıyla eklendi.`);
         input.value = '';
       } else {
-        alert('Geçersiz veya daha önce kullanılmış bir kod girdiniz.');
+        alert('Geçersiz veya daha önce kullanılmış bir kod.');
       }
     }
 
-    // F12 ve İncele Koruması
-    document.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      showSecToast();
-    });
-
+    // F12 ve İnceleme Koruması
+    document.addEventListener('contextmenu', e => { e.preventDefault(); showSecToast(); });
     document.addEventListener('keydown', e => {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && e.key === 'u')
-      ) {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'u')) {
         e.preventDefault();
         showSecToast();
       }
