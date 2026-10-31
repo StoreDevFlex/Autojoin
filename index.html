@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flex SCRIPT - Web Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Fonts Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'sans-serif'],
+},
+colors: {
+brand: {
+accent: '#E0A98B',
+accentHover: '#C89376',
+bgDark: 'rgba(22, 17, 21, 0.88)',
+cardDark: 'rgba(32, 25, 30, 0.78)',
+cardBorder: 'rgba(255, 255, 255, 0.08)'
+}
+}
+}
+}
+}
+</script>
+<style>
+body {
+font-family: 'Inter', sans-serif;
+background-image: url('https://cdn.discordapp.com/attachments/1554559289044115579/1566112549852684408/CBBEBFC5-2D5B-48C3-84F2-17BCB7BFFEA3.gif?ex=6ae75b78&is=6ae609f8&hm=b61d05d73c201b23f2abd5cbfc9b47004d147e5f2f2f2935af0477d1541f29fb&'), url('https://placehold.co/1920x1080/1a1216/e0a98b?text=Flex+SCRIPT');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+user-select: none;
+-webkit-user-select: none;
+}
+.bg-overlay {
+background: radial-gradient(circle at top right, rgba(224, 169, 139, 0.12), transparent 55%),
+linear-gradient(to bottom, rgba(14, 11, 15, 0.75), rgba(10, 8, 11, 0.90));
+backdrop-filter: blur(14px) brightness(0.7);
+-webkit-backdrop-filter: blur(14px) brightness(0.7);
+}
+.glass-card {
+background: rgba(30, 23, 28, 0.75);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+border: 1px solid rgba(255, 255, 255, 0.08);
+box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+}
+.glass-card-interactive {
+transition: all 0.25s ease;
+}
+.glass-card-interactive:hover {
+border-color: rgba(224, 169, 139, 0.35);
+box-shadow: 0 10px 35px 0 rgba(224, 169, 139, 0.12);
+}
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-track {
+background: rgba(18, 14, 17, 0.5);
+}
+::-webkit-scrollbar-thumb {
+background: rgba(224, 169, 139, 0.35);
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: rgba(224, 169, 139, 0.65);
+}
+</style>
+</head>
+<body class="min-h-screen text-gray-200 antialiased selection:bg-rose-500 selection:text-white">
+<!-- Background Canvas Overlay -->
+<div class="fixed inset-0 bg-overlay pointer-events-none -z-10"></div>
+<!-- Security Alert Toast (F12 Protection Alert) -->
+<div id="securityToast" class="fixed top-5 right-5 z-50 transform translate-y-[-160%] transition-transform duration-300 ease-out flex items-center gap-3 px-5 py-3.5 rounded-xl bg-red-950/90 border border-red-500/50 text-red-100 shadow-2xl backdrop-blur-md">
+<i class="fa-solid fa-shield-halved text-xl text-red-400"></i>
+<div>
+<h4 class="font-bold text-sm" data-i18n="secTitle">Erişim Engellendi</h4>
+<p class="text-xs text-red-200/80" data-i18n="secDesc">Geliştirici araçları (F12) ve Ögeyi Denetle bu sitede devre dışıdır.</p>
+</div>
+</div>
+<!-- Notification Toast -->
+<div id="notificationToast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transform -translate-y-36 transition-all duration-300 ease-out flex items-center gap-3 px-6 py-4 rounded-xl bg-emerald-950/90 border border-emerald-500/40 text-emerald-100 shadow-2xl backdrop-blur-md min-w-[320px]">
+<i id="notificationIcon" class="fa-solid fa-circle-check text-xl text-emerald-400"></i>
+<div class="flex-1">
+<h4 id="notificationTitle" class="font-bold text-sm">Başarılı</h4>
+<p id="notificationMessage" class="text-xs text-emerald-200/90">İşlem başarıyla gerçekleştirildi.</p>
+</div>
+</div>
+<!-- Main Container -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+<!-- Top Navigation Bar -->
+<header class="flex flex-col lg:flex-row items-center justify-between gap-4 pb-2">
+<!-- Logo Brand -->
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-300 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-rose-500/20">
+F
+</div>
+<div>
+<h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+Flex SCRIPT
+<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">VIP</span>
+</h1>
+<p class="text-[11px] text-gray-400 font-medium" data-i18n="subtitle">OTOMASYON & BİLDİRİM PANELİ</p>
+</div>
+</div>
+<!-- Navigation Bar -->
+<nav class="flex items-center gap-1 sm:gap-1.5 bg-black/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md overflow-x-auto max-w-full">
+<button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-brand-accent/20 text-brand-accent border border-brand-accent/30 shadow-sm whitespace-nowrap">
+<i class="fa-solid fa-gauge-high mr-1.5"></i><span data-i18n="navDashboard">Panel</span>
+</button>
+<button onclick="switchTab('topup')" id="nav-topup" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap">
+<i class="fa-solid fa-wallet mr-1.5"></i><span data-i18n="navTopup">Bakiye Yükle</span>
+</button>
+<button onclick="switchTab('slots')" id="nav-slots" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap">
+<i class="fa-solid fa-cubes mr-1.5"></i><span data-i18n="navSlots">Slot Auto Join</span>
+</button>
+<button onclick="switchTab('marketplace')" id="nav-marketplace" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap">
+<i class="fa-solid fa-store mr-1.5"></i><span data-i18n="navMarketplace">Mağaza</span>
+</button>
+<button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap">
+<i class="fa-solid fa-trophy mr-1.5"></i><span data-i18n="navLeaderboard">Liderlik</span>
+</button>
+<button onclick="switchTab('statistics')" id="nav-statistics" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap">
+<i class="fa-solid fa-chart-line mr-1.5"></i><span data-i18n="navStats">İstatistikler</span>
+</button>
+</nav>
+<!-- Language & Auth Status Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher -->
+<button onclick="toggleLanguage()" class="px-3 py-2 rounded-xl bg-black/40 hover:bg-black/60 border border-white/10 text-xs font-bold text-brand-accent flex items-center gap-1.5 transition-all">
+<i class="fa-solid fa-globe"></i>
+<span id="currentLangLabel">TR</span>
+</button>
+<!-- Auth Dynamic Action -->
+<div id="authHeaderContainer">
+<!-- Injected via JS -->
+</div>
+</div>
+</header>
+<!-- Discord Banner -->
+<div id="discordBanner" class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-l-brand-accent">
+<div class="flex items-center gap-4 text-center md:text-left">
+<div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 text-xl">
+<i class="fa-brands fa-discord"></i>
+</div>
+<div>
+<h3 class="text-base font-bold text-white" data-i18n="discordTitle">Önce Discord sunucusuna katılın.</h3>
+<p class="text-xs text-gray-400 mt-0.5" data-i18n="discordDesc">Flex SCRIPT slotlarını satın almak ve kullanmak için Discord topluluğumuza üye olmanız gerekir.</p>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end">
+<a href="https://discord.gg" target="_blank" rel="noopener" class="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-accent/20">
+<span data-i18n="btnJoinServer">Sunucuya Katıl</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+<button id="btnJoinedToggle" onclick="toggleDiscordJoined()" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs sm:text-sm font-semibold transition-all">
+<span data-i18n="btnJoined">Katıldım</span>
+</button>
+</div>
+</div>
+<!-- SECTIONS / TABS -->
+<!-- 1. DASHBOARD TAB -->
+<div id="tab-dashboard" class="tab-content flex flex-col gap-6">
+<!-- User Overview & Balance Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- User Status Card -->
+<div class="glass-card glass-card-interactive rounded-2xl p-5 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent text-xl">
+<i class="fa-solid fa-user-shield"></i>
+</div>
+<div>
+<h2 id="dashUsername" class="text-lg font-bold text-white">driftpixelwogm</h2>
+<p id="discordBadge" class="text-xs text-rose-400/90 font-medium mt-0.5 flex items-center gap-1.5">
+<i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="membershipReq">Üyelik gerekli</span>
+</p>
+</div>
+</div>
+<button id="authBtnQuick" onclick="openAuthModal('login')" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 transition-all">
+<i class="fa-solid fa-right-to-bracket"></i>
+</button>
+</div>
+<!-- Balance Display -->
+<div class="glass-card glass-card-interactive rounded-2xl p-5 flex flex-col justify-between">
+<div class="text-xs uppercase font-semibold text-gray-400 tracking-wider" data-i18n="availBalance">Kullanılabilir bakiye</div>
+<div class="my-2 flex items-baseline gap-2">
+<span id="displayBalance" class="text-3xl font-extrabold text-white font-mono">$0.00</span>
+<span class="text-xs text-gray-400">USD</span>
+</div>
+<div>
+<button onclick="switchTab('topup')" class="text-xs font-bold text-brand-accent hover:text-amber-200 flex items-center gap-1.5 transition-all">
+<span data-i18n="topUpLink">Bakiye Yükle</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Active Slots & History Overview -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Active Slot Container -->
+<div class="glass-card rounded-2xl p-5 flex flex-col justify-between min-h-[160px]">
+<div>
+<h3 class="text-sm font-bold text-gray-300 mb-3" data-i18n="activeSlotTitle">Aktif Slot Durumu</h3>
+<div id="activeSlotContent" class="flex items-center gap-3 text-gray-400 text-sm font-medium">
+<i class="fa-solid fa-wifi text-rose-400"></i>
+<span data-i18n="noSlot">Aktif slotunuz bulunmuyor.</span>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button onclick="switchTab('slots')" class="px-5 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-md" data-i18n="browseSlots">
+Slot Auto Join
+</button>
+</div>
+</div>
+<!-- Balance History -->
+<div class="glass-card rounded-2xl p-5 flex flex-col justify-between min-h-[160px]">
+<div class="flex items-center justify-between border-b border-white/5 pb-3">
+<h3 class="text-base font-bold text-white" data-i18n="balanceHist">Bakiye geçmişi</h3>
+<span id="historyCount" class="text-xs text-gray-400 font-mono">0 kayıt</span>
+</div>
+<div id="historyList" class="my-3 space-y-2 max-h-[120px] overflow-y-auto pr-1">
+<p class="text-xs text-gray-500 italic py-2" data-i18n="noActivity">Henüz bakiye hareketi yok.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. TOP-UP TAB (Gift Code Redemption) -->
+<div id="tab-topup" class="tab-content hidden flex-col gap-6">
+<!-- Top-up User Header -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="glass-card rounded-2xl p-5 flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-accent text-lg">
+<i class="fa-solid fa-user-check"></i>
+</div>
+<div>
+<div id="topupUsername" class="text-base font-bold text-white">driftpixelwogm</div>
+<div class="text-xs text-gray-400" data-i18n="membershipReq">Üyelik gerekli</div>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-5 flex flex-col justify-center">
+<div class="text-xs text-gray-400 font-medium" data-i18n="availBalance">Kullanılabilir bakiye</div>
+<div id="topupDisplayBalance" class="text-3xl font-extrabold text-white font-mono my-1">$0.00</div>
+</div>
+</div>
+<!-- Gift Code Box & Crypto Disabled -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Gift Code Box (2 Columns) -->
+<div class="lg:col-span-2 glass-card rounded-2xl p-6 flex flex-col justify-between gap-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent text-xl shrink-0">
+<i class="fa-solid fa-gift"></i>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white" data-i18n="giftCodeTitle">Hediye kodu</h3>
+<p class="text-xs text-gray-400 mt-1" data-i18n="giftCodeDesc">Bakiyenize miktar eklemek için kodunuzu aşağıya girin.</p>
+</div>
+</div>
+<div class="space-y-3">
+<label class="block text-xs font-semibold text-gray-400" data-i18n="yourGiftCode">Hediye kodunuz</label>
+<div class="relative">
+<input id="giftCodeInput" type="password" placeholder="FLEX-XXXX-XXXX-XXXX-XXXX" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm font-mono text-white tracking-widest focus:outline-none focus:border-brand-accent transition-all pr-12">
+<button onclick="toggleCodeVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+<i id="eyeIcon" class="fa-solid fa-eye-slash text-sm"></i>
+</button>
+</div>
+</div>
+<button onclick="redeemGiftCode()" class="w-full py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-accent/20">
+<span data-i18n="btnRedeem">Kodu Kullan</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+</button>
+</div>
+<!-- Crypto Option Disabled -->
+<div class="glass-card rounded-2xl p-6 flex flex-col justify-between opacity-70">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 text-xl shrink-0">
+<i class="fa-solid fa-wallet"></i>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white">Crypto</h3>
+<p class="text-xs text-gray-400 mt-1" data-i18n="cryptoDesc">Kripto ile bakiye yükleme aktif değildir.</p>
+</div>
+</div>
+<div class="py-10 text-center">
+<span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-gray-500 uppercase tracking-wider" data-i18n="unavailable">Kullanılamaz</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. SLOTS TAB -->
+<div id="tab-slots" class="tab-content hidden flex-col gap-6">
+<div class="glass-card rounded-2xl p-6">
+<h2 class="text-xl font-bold text-white mb-1" data-i18n="slotsTitle">Flex SCRIPT Auto Join Slotları</h2>
+<p class="text-xs text-gray-400 mb-6" data-i18n="slotsSubtitle">Bakiyeniz ile dilediğiniz Auto Join aboneliğini aktifleştirin.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Slot 1 -->
+<div class="glass-card glass-card-interactive rounded-2xl p-5 flex flex-col justify-between border border-white/10">
+<div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">AUTO JOIN</span>
+<span class="text-lg font-extrabold text-brand-accent font-mono">$15.00 <span class="text-xs text-gray-400 font-normal">/ay</span></span>
+</div>
+<h3 class="text-base font-bold text-white mb-1">Flex Auto Join Basic Slot</h3>
+<p class="text-xs text-gray-400">Tüm popüler Roblox ve FPS oyunları için temel Auto Join slotu.</p>
+</div>
+<button onclick="purchaseSlot('Flex Auto Join Basic', 15.00)" class="mt-6 w-full py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs transition-all" data-i18n="btnBuySlot">Slot Auto Join Satın Al</button>
+</div>
+<!-- Slot 2 -->
+<div class="glass-card glass-card-interactive rounded-2xl p-5 flex flex-col justify-between border border-brand-accent/40 relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-brand-accent text-slate-950 text-[9px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">POPÜLER</div>
+<div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 text-[10px] font-bold border border-rose-500/20">AUTO JOIN PRO</span>
+<span class="text-lg font-extrabold text-brand-accent font-mono">$25.00 <span class="text-xs text-gray-400 font-normal">/ay</span></span>
+</div>
+<h3 class="text-base font-bold text-white mb-1">Flex Auto Join VIP Slot</h3>
+<p class="text-xs text-gray-400">Dolu sunuculara 0ms gecikme ile öncelikli otomatik bağlanma botu.</p>
+</div>
+<button onclick="purchaseSlot('Flex Auto Join VIP', 25.00)" class="mt-6 w-full py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs transition-all" data-i18n="btnBuySlot">Slot Auto Join Satın Al</button>
+</div>
+<!-- Slot 3 -->
+<div class="glass-card glass-card-interactive rounded-2xl p-5 flex flex-col justify-between border border-white/10">
+<div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20">ULTIMATE</span>
+<span class="text-lg font-extrabold text-brand-accent font-mono">$45.00 <span class="text-xs text-gray-400 font-normal">/ay</span></span>
+</div>
+<h3 class="text-base font-bold text-white mb-1">Flex Auto Join Ultimate Slot</h3>
+<p class="text-xs text-gray-400">Sınırsız sunucu tarama ve aynı anda çoklu hesap Auto Join sistemi.</p>
+</div>
+<button onclick="purchaseSlot('Flex Auto Join Ultimate', 45.00)" class="mt-6 w-full py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs transition-all" data-i18n="btnBuySlot">Slot Auto Join Satın Al</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. MARKETPLACE TAB -->
+<div id="tab-marketplace" class="tab-content hidden flex-col gap-6">
+<div class="glass-card rounded-2xl p-6">
+<h2 class="text-xl font-bold text-white mb-1" data-i18n="marketTitle">Flex SCRIPT Mağazası</h2>
+<p class="text-xs text-gray-400 mb-6" data-i18n="marketSubtitle">Ek konfigürasyonlar, VIP script kodları ve araçlar.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="glass-card glass-card-interactive rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg mb-3">
+<i class="fa-solid fa-bolt"></i>
+</div>
+<h3 class="text-sm font-bold text-white">Ultra Auto-Joiner Tool</h3>
+<p class="text-xs text-gray-400 mt-1">Dolu sunuculara anında otomatik bağlanma eklentisi.</p>
+</div>
+<div class="mt-5 flex items-center justify-between border-t border-white/5 pt-3">
+<span class="text-sm font-bold text-brand-accent font-mono">$10.00</span>
+<button onclick="purchaseItem('Ultra Auto-Joiner Tool', 10.00)" class="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-all" data-i18n="btnBuy">Satın Al</button>
+</div>
+</div>
+<div class="glass-card glass-card-interactive rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg mb-3">
+<i class="fa-solid fa-sliders"></i>
+</div>
+<h3 class="text-sm font-bold text-white">Pro Config Bundle</h3>
+<p class="text-xs text-gray-400 mt-1">En iyi oyuniçi ayarlar ve tespit edilmeyen özel yapılandırmalar.</p>
+</div>
+<div class="mt-5 flex items-center justify-between border-t border-white/5 pt-3">
+<span class="text-sm font-bold text-brand-accent font-mono">$5.00</span>
+<button onclick="purchaseItem('Pro Config Bundle', 5.00)" class="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-all" data-i18n="btnBuy">Satın Al</button>
+</div>
+</div>
+<div class="glass-card glass-card-interactive rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg mb-3">
+<i class="fa-solid fa-key"></i>
+</div>
+<h3 class="text-sm font-bold text-white">Flex Lifetime VIP Key</h3>
+<p class="text-xs text-gray-400 mt-1">Ömür boyu sınırsız güncelleme ve öncelikli destek erişimi.</p>
+</div>
+<div class="mt-5 flex items-center justify-between border-t border-white/5 pt-3">
+<span class="text-sm font-bold text-brand-accent font-mono">$80.00</span>
+<button onclick="purchaseItem('Flex Lifetime VIP Key', 80.00)" class="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-all" data-i18n="btnBuy">Satın Al</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. LEADERBOARD TAB -->
+<div id="tab-leaderboard" class="tab-content hidden flex-col gap-6">
+<div class="glass-card rounded-2xl p-6">
+<h2 class="text-xl font-bold text-white mb-1" data-i18n="leaderTitle">Liderlik Tablosu</h2>
+<p class="text-xs text-gray-400 mb-6" data-i18n="leaderSubtitle">En aktif Flex SCRIPT kullanıcıları ve slot sahipleri.</p>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center text-xs">1</span>
+<div>
+<div class="text-sm font-bold text-white flex items-center gap-1.5">ApexFlexer <i class="fa-solid fa-crown text-amber-400 text-xs"></i></div>
+<div class="text-[10px] text-gray-400">14 Auto Join Slot</div>
+</div>
+</div>
+<span class="font-mono font-bold text-amber-300 text-sm">$650.00 Toplam Bakiye</span>
+</div>
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-400/10 border border-slate-400/20">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-slate-300 text-slate-950 font-black flex items-center justify-center text-xs">2</span>
+<div>
+<div class="text-sm font-bold text-white">ShadowScriptor</div>
+<div class="text-[10px] text-gray-400">9 Auto Join Slot</div>
+</div>
+</div>
+<span class="font-mono font-bold text-slate-300 text-sm">$410.00 Toplam Bakiye</span>
+</div>
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-amber-700/10 border border-amber-700/20">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-amber-600 text-slate-950 font-black flex items-center justify-center text-xs">3</span>
+<div>
+<div class="text-sm font-bold text-white">VortexUser_X</div>
+<div class="text-[10px] text-gray-400">6 Auto Join Slot</div>
+</div>
+</div>
+<span class="font-mono font-bold text-amber-500 text-sm">$280.00 Toplam Bakiye</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. STATISTICS TAB -->
+<div id="tab-statistics" class="tab-content hidden flex-col gap-6">
+<div class="glass-card rounded-2xl p-6">
+<h2 class="text-xl font-bold text-white mb-1" data-i18n="statsTitle">Sistem İstatistikleri</h2>
+<p class="text-xs text-gray-400 mb-6" data-i18n="statsSubtitle">Flex SCRIPT sunucu durumu ve aktif kullanıcı verileri.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-4 rounded-xl bg-white/5 border border-white/10">
+<div class="text-xs text-gray-400 font-medium" data-i18n="totalUsers">Toplam Kullanıcı</div>
+<div class="text-2xl font-extrabold text-white font-mono mt-2">1,482</div>
+<div class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-arrow-trend-up"></i> +12% bu hafta</div>
+</div>
+<div class="p-4 rounded-xl bg-white/5 border border-white/10">
+<div class="text-xs text-gray-400 font-medium" data-i18n="activeSlots">Aktif Auto Join Slotları</div>
+<div class="text-2xl font-extrabold text-white font-mono mt-2">329</div>
+<div class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-circle text-[8px]"></i> Çevrimiçi</div>
+</div>
+<div class="p-4 rounded-xl bg-white/5 border border-white/10">
+<div class="text-xs text-gray-400 font-medium" data-i18n="scriptUptime">Sistem Uptime</div>
+<div class="text-2xl font-extrabold text-white font-mono mt-2">99.98%</div>
+<div class="text-[10px] text-gray-400 mt-1">Son 30 gün</div>
+</div>
+<div class="p-4 rounded-xl bg-white/5 border border-white/10">
+<div class="text-xs text-gray-400 font-medium" data-i18n="serverLoad">Sunucu Yükü</div>
+<div class="text-2xl font-extrabold text-white font-mono mt-2">14%</div>
+<div class="text-[10px] text-emerald-400 mt-1">Optimal Çalışıyor</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- AUTHENTICATION MODAL (Giriş Yap / Kayıt Ol) -->
+<div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden">
+<div class="glass-card rounded-2xl max-w-md w-full p-6 border border-white/10 shadow-2xl relative">
+<button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+<i class="fa-solid fa-xmark"></i>
+</button>
+<!-- Tabs Header -->
+<div class="flex border-b border-white/10 mb-6">
+<button id="authTabLogin" onclick="switchAuthMode('login')" class="flex-1 py-3 text-sm font-extrabold border-b-2 border-brand-accent text-brand-accent" data-i18n="loginTab">Giriş Yap</button>
+<button id="authTabRegister" onclick="switchAuthMode('register')" class="flex-1 py-3 text-sm font-extrabold text-gray-400 border-b-2 border-transparent hover:text-white" data-i18n="registerTab">Kayıt Ol</button>
+</div>
+<!-- Login Form -->
+<form id="loginForm" onsubmit="handleAuthSubmit(event, 'login')" class="space-y-4">
+<div>
+<label class="block text-xs font-semibold text-gray-400 mb-1" data-i18n="usernameLabel">Kullanıcı Adı</label>
+<input id="loginUsername" type="text" required placeholder="driftpixelwogm" class="w-full bg-black/50 border border-white/10 focus:border-brand-accent rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+</div>
+<div>
+<label class="block text-xs font-semibold text-gray-400 mb-1" data-i18n="passwordLabel">Şifre</label>
+<input id="loginPassword" type="password" required placeholder="••••••••" class="w-full bg-black/50 border border-white/10 focus:border-brand-accent rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+</div>
+<button type="submit" class="w-full py-3 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-extrabold text-sm transition-all mt-2" data-i18n="btnLoginSubmit">
+Giriş Yap
+</button>
+</form>
+<!-- Register Form -->
+<form id="registerForm" onsubmit="handleAuthSubmit(event, 'register')" class="space-y-4 hidden">
+<div>
+<label class="block text-xs font-semibold text-gray-400 mb-1" data-i18n="usernameLabel">Kullanıcı Adı</label>
+<input id="regUsername" type="text" required placeholder="driftpixelwogm" class="w-full bg-black/50 border border-white/10 focus:border-brand-accent rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+</div>
+<div>
+<label class="block text-xs font-semibold text-gray-400 mb-1" data-i18n="emailLabel">E-posta</label>
+<input id="regEmail" type="email" required placeholder="user@flexscript.com" class="w-full bg-black/50 border border-white/10 focus:border-brand-accent rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+</div>
+<div>
+<label class="block text-xs font-semibold text-gray-400 mb-1" data-i18n="passwordLabel">Şifre</label>
+<input id="regPassword" type="password" required placeholder="••••••••" class="w-full bg-black/50 border border-white/10 focus:border-brand-accent rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+</div>
+<button type="submit" class="w-full py-3 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-extrabold text-sm transition-all mt-2" data-i18n="btnRegisterSubmit">
+Kayıt Ol
+</button>
+</form>
+</div>
+</div>
+<!-- JAVASCRIPT SYSTEM ENGINE -->
+<script>
+// State Management
+let userBalance = 0.00;
+let balanceHistory = [];
+let isDiscordJoined = false;
+let currentLang = 'tr';
+let currentUser = JSON.parse(localStorage.getItem('flexUser')) || null;
+let userActiveSlots = [];
+// Language Dictionary
+const translations = {
+en: {
+subtitle: "AUTOMATION & NOTIFIER DASHBOARD",
+navDashboard: "Dashboard",
+navTopup: "Top-up",
+navSlots: "Slot Auto Join",
+navMarketplace: "Marketplace",
+navLeaderboard: "Leaderboard",
+navStats: "Statistics",
+discordTitle: "Join the Discord server first.",
+discordDesc: "Membership is required to buy slots and access Flex SCRIPT features.",
+btnJoinServer: "Join Server",
+btnJoined: "I've joined",
+membershipReq: "Membership required",
+availBalance: "Available balance",
+topUpLink: "Top up",
+activeSlotTitle: "Active Slot Status",
+noSlot: "No active slot available.",
+browseSlots: "Slot Auto Join",
+balanceHist: "Balance history",
+noActivity: "No balance activity yet.",
+giftCodeTitle: "Gift code",
+giftCodeDesc: "Enter your code below to add value to your balance.",
+yourGiftCode: "Your gift code",
+btnRedeem: "Redeem Code",
+cryptoDesc: "Crypto top-ups are not enabled.",
+unavailable: "Unavailable",
+slotsTitle: "Flex SCRIPT Auto Join Slots",
+slotsSubtitle: "Purchase Auto Join subscription slots using your balance.",
+btnBuySlot: "Buy Auto Join Slot",
+marketTitle: "Flex SCRIPT Marketplace",
+marketSubtitle: "Extra configs, VIP script keys, and automation tools.",
+btnBuy: "Buy Now",
+leaderTitle: "Leaderboard",
+leaderSubtitle: "Top active Flex SCRIPT members.",
+statsTitle: "System Statistics",
+statsSubtitle: "Flex SCRIPT server status and real-time metrics.",
+totalUsers: "Total Users",
+activeSlots: "Active Auto Join Slots",
+scriptUptime: "Script Uptime",
+serverLoad: "Server Load",
+secTitle: "Access Denied",
+secDesc: "Developer tools & Inspect Element (F12) are disabled on Flex SCRIPT.",
+loginBtn: "Login / Register",
+logoutBtn: "Logout",
+loginTab: "Login",
+registerTab: "Register",
+usernameLabel: "Username",
+emailLabel: "Email",
+passwordLabel: "Password",
+btnLoginSubmit: "Sign In",
+btnRegisterSubmit: "Create Account",
+guestUser: "Guest User"
+},
+tr: {
+subtitle: "OTOMASYON & BİLDİRİM PANELİ",
+navDashboard: "Panel",
+navTopup: "Bakiye Yükle",
+navSlots: "Slot Auto Join",
+navMarketplace: "Mağaza",
+navLeaderboard: "Liderlik",
+navStats: "İstatistikler",
+discordTitle: "Önce Discord sunucusuna katılın.",
+discordDesc: "Flex SCRIPT slotlarını satın almak ve kullanmak için Discord topluluğumuza üye olmanız gerekir.",
+btnJoinServer: "Sunucuya Katıl",
+btnJoined: "Katıldım",
+membershipReq: "Üyelik gerekli",
+availBalance: "Kullanılabilir bakiye",
+topUpLink: "Bakiye Yükle",
+activeSlotTitle: "Aktif Slot Durumu",
+noSlot: "Aktif slotunuz bulunmuyor.",
+browseSlots: "Slot Auto Join",
+balanceHist: "Bakiye geçmişi",
+noActivity: "Henüz bakiye hareketi yok.",
+giftCodeTitle: "Hediye kodu",
+giftCodeDesc: "Bakiyenize miktar eklemek için kodunuzu aşağıya girin.",
+yourGiftCode: "Hediye kodunuz",
+btnRedeem: "Kodu Kullan",
+cryptoDesc: "Kripto ile bakiye yükleme aktif değildir.",
+unavailable: "Kullanılamaz",
+slotsTitle: "Flex SCRIPT Auto Join Slotları",
+slotsSubtitle: "Bakiyeniz ile dilediğiniz Auto Join aboneliğini aktifleştirin.",
+btnBuySlot: "Slot Auto Join Satın Al",
+marketTitle: "Flex SCRIPT Mağazası",
+marketSubtitle: "Ek konfigürasyonlar, VIP script kodları ve araçlar.",
+btnBuy: "Satın Al",
+leaderTitle: "Liderlik Tablosu",
+leaderSubtitle: "En aktif Flex SCRIPT kullanıcıları ve slot sahipleri.",
+statsTitle: "Sistem İstatistikleri",
+statsSubtitle: "Flex SCRIPT sunucu durumu ve aktif kullanıcı verileri.",
+totalUsers: "Toplam Kullanıcı",
+activeSlots: "Aktif Auto Join Slotları",
+scriptUptime: "Sistem Uptime",
+serverLoad: "Sunucu Yükü",
+secTitle: "Erişim Engellendi",
+secDesc: "Geliştirici araçları (F12) ve Ögeyi Denetle bu sitede devre dışıdır.",
+loginBtn: "Giriş Yap / Kayıt Ol",
+logoutBtn: "Çıkış Yap",
+loginTab: "Giriş Yap",
+registerTab: "Kayıt Ol",
+usernameLabel: "Kullanıcı Adı",
+emailLabel: "E-posta",
+passwordLabel: "Şifre",
+btnLoginSubmit: "Giriş Yap",
+btnRegisterSubmit: "Kayıt Ol",
+guestUser: "Ziyaretçi"
+}
+};
+// 60 Hidden Gift Codes Store
+const validCodesDatabase = new Map();
+const codeValues = [10, 20, 25, 50];
+for (let i = 0; i < 60; i++) {
+const hex = (n) => Math.floor(n).toString(16).padStart(4, '0').toUpperCase();
+const codeStr = ⁠FLEX-2026-${hex((i + 1) * 317)}-${hex((i + 5) * 823)}⁠;
+validCodesDatabase.set(codeStr, { value: codeValues[i % codeValues.length], used: false });
+}
+// Initialize On Load
+window.onload = function() {
+updateLanguageUI();
+updateBalanceDisplay();
+updateAuthUI();
+initSecurity();
+};
+// Tab Switching System
+function switchTab(tabName) {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+const activeTab = document.getElementById(⁠tab-${tabName}⁠);
+if (activeTab) activeTab.classList.remove('hidden');
+const tabs = ['dashboard', 'topup', 'slots', 'marketplace', 'leaderboard', 'statistics'];
+tabs.forEach(tab => {
+const btn = document.getElementById(⁠nav-${tab}⁠);
+if (btn) {
+if (tab === tabName) {
+btn.className = "px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-brand-accent/20 text-brand-accent border border-brand-accent/30 shadow-sm whitespace-nowrap";
+} else {
+btn.className = "px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all duration-200 whitespace-nowrap";
+}
+}
+});
+}
+// Auth Modal Controls
+function openAuthModal(mode = 'login') {
+document.getElementById('authModal').classList.remove('hidden');
+switchAuthMode(mode);
+}
+function closeAuthModal() {
+document.getElementById('authModal').classList.add('hidden');
+}
+function switchAuthMode(mode) {
+const loginTab = document.getElementById('authTabLogin');
+const regTab = document.getElementById('authTabRegister');
+const loginForm = document.getElementById('loginForm');
+const regForm = document.getElementById('registerForm');
+if (mode === 'login') {
+loginTab.className = "flex-1 py-3 text-sm font-extrabold border-b-2 border-brand-accent text-brand-accent";
+regTab.className = "flex-1 py-3 text-sm font-extrabold text-gray-400 border-b-2 border-transparent hover:text-white";
+loginForm.classList.remove('hidden');
+regForm.classList.add('hidden');
+} else {
+regTab.className = "flex-1 py-3 text-sm font-extrabold border-b-2 border-brand-accent text-brand-accent";
+loginTab.className = "flex-1 py-3 text-sm font-extrabold text-gray-400 border-b-2 border-transparent hover:text-white";
+regForm.classList.remove('hidden');
+loginForm.classList.add('hidden');
+}
+}
+function handleAuthSubmit(e, mode) {
+e.preventDefault();
+let username = '';
+if (mode === 'login') {
+username = document.getElementById('loginUsername').value.trim();
+} else {
+username = document.getElementById('regUsername').value.trim();
+}
+if (!username) return;
+currentUser = { username: username };
+localStorage.setItem('flexUser', JSON.stringify(currentUser));
+closeAuthModal();
+updateAuthUI();
+showToast(
+currentLang === 'tr' ? 'Hoş Geldiniz' : 'Welcome',
+⁠${username} ${currentLang === 'tr' ? 'başarıyla giriş yaptı.' : 'logged in successfully.'}⁠,
+'success'
+);
+}
+function logoutUser() {
+currentUser = null;
+localStorage.removeItem('flexUser');
+updateAuthUI();
+showToast(currentLang === 'tr' ? 'Çıkış Yapıldı' : 'Logged Out', '', 'info');
+}
+function updateAuthUI() {
+const authContainer = document.getElementById('authHeaderContainer');
+const dashUsername = document.getElementById('dashUsername');
+const topupUsername = document.getElementById('topupUsername');
+const quickBtn = document.getElementById('authBtnQuick');
+if (currentUser) {
+authContainer.innerHTML = ⁠<div class="flex items-center gap-2"> <span class="text-xs font-bold text-gray-200 bg-black/40 px-3 py-2 rounded-xl border border-white/10"><i class="fa-solid fa-user text-brand-accent mr-1"></i> ${currentUser.username}</span> <button onclick="logoutUser()" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition-all"> <i class="fa-solid fa-right-from-bracket"></i> </button> </div>⁠;
+dashUsername.innerText = currentUser.username;
+topupUsername.innerText = currentUser.username;
+quickBtn.onclick = logoutUser;
+quickBtn.innerHTML = ⁠<i class="fa-solid fa-right-from-bracket"></i>⁠;
+} else {
+authContainer.innerHTML = ⁠<button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-slate-950 font-bold text-xs transition-all shadow-md"> <i class="fa-solid fa-user-lock mr-1.5"></i> <span>${translations[currentLang].loginBtn}</span> </button>⁠;
+dashUsername.innerText = translations[currentLang].guestUser;
+topupUsername.innerText = translations[currentLang].guestUser;
+quickBtn.onclick = () => openAuthModal('login');
+quickBtn.innerHTML = ⁠<i class="fa-solid fa-right-to-bracket"></i>⁠;
+}
+}
+// Language Toggle
+function toggleLanguage() {
+currentLang = currentLang === 'tr' ? 'en' : 'tr';
+document.getElementById('currentLangLabel').innerText = currentLang.toUpperCase();
+updateLanguageUI();
+updateAuthUI();
+updateBalanceDisplay();
+}
+function updateLanguageUI() {
+const dict = translations[currentLang];
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const key = el.getAttribute('data-i18n');
+if (dict[key]) el.innerText = dict[key];
+});
+}
+// Gift Code Redemption
+function redeemGiftCode() {
+const input = document.getElementById('giftCodeInput');
+const code = input.value.trim().toUpperCase();
+if (!code) {
+showToast(currentLang === 'tr' ? 'Hata' : 'Error', currentLang === 'tr' ? 'Lütfen bir kod girin.' : 'Please enter a code.', 'error');
+return;
+}
+const item = validCodesDatabase.get(code);
+if (!item) {
+showToast(currentLang === 'tr' ? 'Geçersiz Kod' : 'Invalid Code', currentLang === 'tr' ? 'Girdiğiniz kod sistemde bulunamadı.' : 'The gift code is invalid.', 'error');
+return;
+}
+if (item.used) {
+showToast(currentLang === 'tr' ? 'Kullanılmış' : 'Already Used', currentLang === 'tr' ? 'Bu kod daha önce kullanılmış.' : 'This code has already been redeemed.', 'error');
+return;
+}
+item.used = true;
+userBalance += item.value;
+const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+balanceHistory.unshift({
+type: currentLang === 'tr' ? 'Hediye Kodu Yüklemesi' : 'Gift Code Redemption',
+amount: ⁠+$${item.value.toFixed(2)}⁠,
+time: timeStr
+});
+input.value = '';
+updateBalanceDisplay();
+showToast(currentLang === 'tr' ? 'Başarılı!' : 'Success!', ⁠$${item.value.toFixed(2)} ${currentLang === 'tr' ? 'bakiye eklendi.' : 'added to balance.'}⁠, 'success');
+}
+// Slot Purchase
+function purchaseSlot(slotName, price) {
+if (!isDiscordJoined) {
+showToast(currentLang === 'tr' ? 'Discord Üyeliği Şart' : 'Discord Required', currentLang === 'tr' ? 'Lütfen önce Discord bannerında "Katıldım" butonuna basın.' : 'Please click "I've joined" on Discord banner first.', 'error');
+return;
+}
+if (userBalance < price) {
+showToast(currentLang === 'tr' ? 'Yetersiz Bakiye' : 'Insufficient Balance', currentLang === 'tr' ? 'Lütfen hediye kodu ile bakiye yükleyin.' : 'Please top up your balance using a gift code.', 'error');
+switchTab('topup');
+return;
+}
+userBalance -= price;
+userActiveSlots.push(slotName);
+const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+balanceHistory.unshift({
+type: ⁠${currentLang === 'tr' ? 'Slot Satın Alındı' : 'Slot Purchased'}: ${slotName}⁠,
+amount: ⁠-$${price.toFixed(2)}⁠,
+time: timeStr
+});
+updateBalanceDisplay();
+updateActiveSlotUI();
+showToast(currentLang === 'tr' ? 'Slot Aktifleştirildi' : 'Slot Activated', ⁠${slotName} ${currentLang === 'tr' ? 'başarıyla alındı.' : 'purchased successfully.'}⁠, 'success');
+}
+function purchaseItem(name, price) {
+if (userBalance < price) {
+showToast(currentLang === 'tr' ? 'Yetersiz Bakiye' : 'Insufficient Balance', currentLang === 'tr' ? 'Lütfen bakiye yükleyin.' : 'Please top up your balance.', 'error');
+switchTab('topup');
+return;
+}
+userBalance -= price;
+const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+balanceHistory.unshift({
+type: ⁠${currentLang === 'tr' ? 'Ürün Satın Alındı' : 'Item Purchased'}: ${name}⁠,
+amount: ⁠-$${price.toFixed(2)}⁠,
+time: timeStr
+});
+updateBalanceDisplay();
+showToast(currentLang === 'tr' ? 'Satın Alındı' : 'Purchased', ⁠${name} ${currentLang === 'tr' ? 'hesabınıza eklendi.' : 'added to your account.'}⁠, 'success');
+}
+function updateActiveSlotUI() {
+const container = document.getElementById('activeSlotContent');
+if (userActiveSlots.length > 0) {
+container.innerHTML = ⁠<div class="flex flex-col gap-1 w-full"> ${userActiveSlots.map(s =>⁠
+<div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-bold">
+<span><i class="fa-solid fa-circle-check mr-1.5"></i> ${s}</span>
+<span class="text-[10px] text-emerald-400 uppercase">AKTİF</span>
+</div>
+⁠).join('')} </div> ⁠;
+}
+}
+// Toggle Discord
+function toggleDiscordJoined() {
+isDiscordJoined = !isDiscordJoined;
+const btn = document.getElementById('btnJoinedToggle');
+const badge = document.getElementById('discordBadge');
+if (isDiscordJoined) {
+btn.innerHTML = ⁠<i class="fa-solid fa-check text-emerald-400 mr-1"></i> ${currentLang === 'tr' ? 'Katılındı' : 'Joined'}⁠;
+btn.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold transition-all";
+badge.innerHTML = ⁠<i class="fa-solid fa-circle-check text-emerald-400"></i> ${currentLang === 'tr' ? 'Üyelik Doğrulandı' : 'Member verified'}⁠;
+badge.className = "text-xs text-emerald-400 font-semibold mt-0.5 flex items-center gap-1.5";
+} else {
+btn.innerHTML = currentLang === 'tr' ? 'Katıldım' : "I've joined";
+btn.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs sm:text-sm font-semibold transition-all";
+badge.innerHTML = ⁠<i class="fa-solid fa-circle-exclamation"></i> ${translations[currentLang].membershipReq}⁠;
+badge.className = "text-xs text-rose-400/90 font-medium mt-0.5 flex items-center gap-1.5";
+}
+}
+// UI Balance Updates
+function updateBalanceDisplay() {
+const formatted = ⁠$${userBalance.toFixed(2)}⁠;
+document.getElementById('displayBalance').innerText = formatted;
+document.getElementById('topupDisplayBalance').innerText = formatted;
+const historyList = document.getElementById('historyList');
+const historyCount = document.getElementById('historyCount');
+historyCount.innerText = ⁠${balanceHistory.length} ${currentLang === 'tr' ? 'kayıt' : 'entries'}⁠;
+if (balanceHistory.length === 0) {
+historyList.innerHTML = ⁠<p class="text-xs text-gray-500 italic py-2">${translations[currentLang].noActivity}</p>⁠;
+} else {
+historyList.innerHTML = balanceHistory.map(item => ⁠<div class="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-none"> <div> <div class="font-bold text-gray-200">${item.type}</div> <div class="text-[10px] text-gray-500 font-mono">${item.time}</div> </div> <span class="font-mono font-extrabold ${item.amount.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}">${item.amount}</span> </div>⁠).join('');
+}
+}
+function toggleCodeVisibility() {
+const input = document.getElementById('giftCodeInput');
+const icon = document.getElementById('eyeIcon');
+if (input.type === 'password') {
+input.type = 'text';
+icon.className = "fa-solid fa-eye text-sm";
+} else {
+input.type = 'password';
+icon.className = "fa-solid fa-eye-slash text-sm";
+}
+}
+// Toast Notification System
+let toastTimeout;
+function showToast(title, message, type = 'success') {
+const toast = document.getElementById('notificationToast');
+const icon = document.getElementById('notificationIcon');
+document.getElementById('notificationTitle').innerText = title;
+document.getElementById('notificationMessage').innerText = message;
+if (type === 'error') {
+toast.className = "fixed top-5 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 ease-out flex items-center gap-3 px-6 py-4 rounded-xl bg-rose-950/90 border border-rose-500/40 text-rose-100 shadow-2xl backdrop-blur-md min-w-[320px]";
+icon.className = "fa-solid fa-circle-xmark text-xl text-rose-400";
+} else if (type === 'info') {
+toast.className = "fixed top-5 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 ease-out flex items-center gap-3 px-6 py-4 rounded-xl bg-amber-950/90 border border-amber-500/40 text-amber-100 shadow-2xl backdrop-blur-md min-w-[320px]";
+icon.className = "fa-solid fa-circle-info text-xl text-amber-400";
+} else {
+toast.className = "fixed top-5 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 ease-out flex items-center gap-3 px-6 py-4 rounded-xl bg-emerald-950/90 border border-emerald-500/40 text-emerald-100 shadow-2xl backdrop-blur-md min-w-[320px]";
+icon.className = "fa-solid fa-circle-check text-xl text-emerald-400";
+}
+toast.style.transform = 'translate(-50%, 0)';
+clearTimeout(toastTimeout);
+toastTimeout = setTimeout(() => {
+toast.style.transform = 'translate(-50%, -160%)';
+}, 3500);
+}
+// DevTools & F12 Security Protection
+function initSecurity() {
+document.addEventListener('contextmenu', e => {
+e.preventDefault();
+triggerSecurityToast();
+});
+document.addEventListener('keydown', e => {
+if (
+e.key === 'F12' ||
+(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+(e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+) {
+e.preventDefault();
+triggerSecurityToast();
+}
+});
+}
+let secTimeout;
+function triggerSecurityToast() {
+const toast = document.getElementById('securityToast');
+toast.style.transform = 'translateY(0)';
+clearTimeout(secTimeout);
+secTimeout = setTimeout(() => {
+toast.style.transform = 'translateY(-160%)';
+}, 3000);
+}
+</script>
+</body>
+</html>
